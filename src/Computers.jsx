@@ -1,5 +1,5 @@
 //import * as THREE from 'three'
-import React, { useState, useRef, useMemo, useContext, createContext, Suspense } from 'react'
+import { useState, useMemo, useContext, createContext, Suspense } from 'react'
 //import { useFrame } from '@react-three/fiber'
 import {
   //useAspect,
