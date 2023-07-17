@@ -1,18 +1,20 @@
-//import * as THREE from 'three'
-import { useState, useMemo, useContext, createContext, Suspense } from 'react'
+import * as THREE from 'three'
+import { useState, useEffect, useMemo, useContext, createContext } from 'react'
 //import { useFrame } from '@react-three/fiber'
 import {
   //useAspect,
   //useCursor,
-  useVideoTexture,
-  useTexture,
+  //useVideoTexture,
+  //useTexture,
   useGLTF,
   Merged,
-  RenderTexture,
-  PerspectiveCamera
+  //RenderTexture,
+  //PerspectiveCamera
 } from '@react-three/drei'
 
-import { SpinningBox } from './SpinningBox'
+//import { SpinningBox } from './SpinningBox'
+//import url from './public/textures/chroma_eye.mp4'
+
 //THREE.ColorManagement.legacyMode = false
 
 const context = createContext()
@@ -35,7 +37,10 @@ export function Instances({ children, ...props }) {
   )
   return (
     <Merged meshes={instances} {...props}>
-      {(instances) => <context.Provider value={instances} children={children} />}
+      {
+        //(instances) => <context.Provider value={instances} children={children} />
+        (instances) => <context.Provider value={instances}>{children}</context.Provider>
+      }
     </Merged>
   )
 }
@@ -46,74 +51,48 @@ if clicked, make active and focus camera on monitor
 if hover make interactive
   some objects in the interactive scene will go to project demo page
   some objects will just be interactive, like the spinningbox scene
-after an random amount of time within a range when no scene has become active, do a glitch effect
+after an random amount of time within a range when no scene has become active, 
+do a glitch effect
+
 if 3 glitch effects have happened without being disturbed, do a mult monitor glitch
+This component renders a monitor (taken out of the gltf model)
+It renders a custom scene into a texture and projects it onto monitors screen
 */
 
-/* This component renders a monitor (taken out of the gltf model)
-   It renders a custom scene into a texture and projects it onto monitors screen */
-function Screen({ screen, video, image, children, ...props }) {
-  const { nodes } = useGLTF('/computers.glb', '10')
-
-  const [hovered, hover] = useState(false)
-  //const [clicked, click] = useState(false)
-
-  //Mob Psycho GIFs are width: 540px, height: 300px
-  if (!hovered) {
-    return (
-      <mesh geometry={nodes[screen].geometry}>
-        <Suspense fallback={<FallbackMaterial url={image} />}>
-          <VideoMaterial url={video} />
-        </Suspense>
-      </mesh>
-    )
-  }
-
+// position, rotation, size(x, y), video, placeholder, text
+/* in meters
+  Screen1 = x:0.90 z:0.66
+  Screen2 = x:1.20 z:0.88
+  Screen3 = x:1.50 z:1.10
+  Screen4 = x:2.40 z:1.76
+*/
+//https://codesandbox.io/s/2cemck?file=/src/App.js:2283-2289
+function VideoScreen(props) {
+  const [video] = useState(() =>
+    Object.assign(document.createElement('video'), {
+      src: '/public/textures/chroma_eye.mp4',
+      crossOrigin: 'Anonymous',
+      loop: true,
+      muted: true
+    })
+  )
+  useEffect(() => void video.play(), [video])
   return (
-    <mesh geometry={nodes[screen].geometry}>
-      <meshBasicMaterial toneMapped={false}>
-        <RenderTexture width={512} height={512} attach="map" anisotropy={16}>
-          <PerspectiveCamera makeDefault manual aspect={1 / 1} position={[0, 0, 10]} />
-          <color attach="background" args={['blue']} />
-          <ambientLight intensity={0.2} />
-          <pointLight position={[10, 10, 10]} intensity={0.75} />
-          <pointLight position={[-10, -10, -10]} />
-          <SpinningBox position={[-3.15, 0.75, 0]} scale={0.5} />
-        </RenderTexture>
-      </meshBasicMaterial>
-    </mesh>
+    <meshBasicMaterial toneMapped={false}>
+      <videoTexture attach="map" args={[video]} encoding={THREE.sRGBEncoding} />
+    </meshBasicMaterial>
   )
 }
 
-/* Renders a monitor with a spinning box */
 /*
-function InteractiveScreen(props) {
+function VideoScreen({ video, image }) {
   return (
-    <Screen {...props}>
-      <meshBasicMaterial toneMapped={false}>
-        <RenderTexture width={512} height={512} attach="map" anisotropy={16}>
-          <PerspectiveCamera makeDefault manual aspect={1 / 1} position={[0, 0, 10]} />
-          <color attach="background" args={['blue']} />
-          <ambientLight intensity={0.2} />
-          <pointLight position={[10, 10, 10]} intensity={0.75} />
-          <pointLight position={[-10, -10, -10]} />
-          <SpinningBox position={[-3.15, 0.75, 0]} scale={0.5} />
-        </RenderTexture>
-      </meshBasicMaterial>
-    </Screen>
-  )
-}
-
-function VideoScreen({ video, image, ...props }) {
-  return (
-    <Screen {...props}>
+      <planeGeometryBuffer
       <Suspense fallback={<FallbackMaterial url={image} />}>
         <VideoMaterial url={video} />
       </Suspense>
-    </Screen>
   )
 }
-*/
 
 function VideoMaterial({ url }) {
   const texture = useVideoTexture(url)
@@ -124,6 +103,7 @@ function FallbackMaterial({ url }) {
   const texture = useTexture(url)
   return <meshBasicMaterial map={texture} toneMapped={false} />
 }
+*/
 
 export function Computers(props) {
   const instances = useContext(context)
@@ -136,11 +116,15 @@ export function Computers(props) {
         geometry={nodes.Monitor4001.geometry}
         material={materials.Texture}
         position={[-0.19, 1.5, -3.31]}>
+        {
+        /*
         <Screen
           screen="Screen4001"
           video="/textures/spooky.mp4"
           image="/textures/placeholder.jpg"
         />
+        */
+        }
       </mesh>
 
       {/* Small Monitors */}

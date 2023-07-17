@@ -33,12 +33,11 @@ export default function App() {
         />
 
         {/* Scene */}
-        <group position={[-0, -2, 0]}>
-          <SpinningBox position={[0, 2, 0]} scale={0.5} />
-
+        <group position={[-0, -2, 0]}> 
           <Instances>
             <Computers />
           </Instances>
+          <SpinningBox position={[0, 2, 0]} scale={0.5} />
           <Ground />
         </group>
 
