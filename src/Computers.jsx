@@ -1,21 +1,5 @@
-import * as THREE from 'three'
-import { useState, useEffect, useMemo, useContext, createContext } from 'react'
-//import { useFrame } from '@react-three/fiber'
-import {
-  //useAspect,
-  //useCursor,
-  //useVideoTexture,
-  //useTexture,
-  useGLTF,
-  Merged,
-  //RenderTexture,
-  //PerspectiveCamera
-} from '@react-three/drei'
-
-//import { SpinningBox } from './SpinningBox'
-//import url from './public/textures/chroma_eye.mp4'
-
-//THREE.ColorManagement.legacyMode = false
+import { useMemo, useContext, createContext } from 'react'
+import { useGLTF, Merged } from '@react-three/drei'
 
 const context = createContext()
 export function Instances({ children, ...props }) {
@@ -37,73 +21,10 @@ export function Instances({ children, ...props }) {
   )
   return (
     <Merged meshes={instances} {...props}>
-      {
-        //(instances) => <context.Provider value={instances} children={children} />
-        (instances) => <context.Provider value={instances}>{children}</context.Provider>
-      }
+      {(instances) => <context.Provider value={instances}>{children}</context.Provider>}
     </Merged>
   )
 }
-
-/*
-default to video of project
-if clicked, make active and focus camera on monitor
-if hover make interactive
-  some objects in the interactive scene will go to project demo page
-  some objects will just be interactive, like the spinningbox scene
-after an random amount of time within a range when no scene has become active, 
-do a glitch effect
-
-if 3 glitch effects have happened without being disturbed, do a mult monitor glitch
-This component renders a monitor (taken out of the gltf model)
-It renders a custom scene into a texture and projects it onto monitors screen
-*/
-
-// position, rotation, size(x, y), video, placeholder, text
-/* in meters
-  Screen1 = x:0.90 z:0.66
-  Screen2 = x:1.20 z:0.88
-  Screen3 = x:1.50 z:1.10
-  Screen4 = x:2.40 z:1.76
-*/
-//https://codesandbox.io/s/2cemck?file=/src/App.js:2283-2289
-function VideoScreen(props) {
-  const [video] = useState(() =>
-    Object.assign(document.createElement('video'), {
-      src: '/public/textures/chroma_eye.mp4',
-      crossOrigin: 'Anonymous',
-      loop: true,
-      muted: true
-    })
-  )
-  useEffect(() => void video.play(), [video])
-  return (
-    <meshBasicMaterial toneMapped={false}>
-      <videoTexture attach="map" args={[video]} encoding={THREE.sRGBEncoding} />
-    </meshBasicMaterial>
-  )
-}
-
-/*
-function VideoScreen({ video, image }) {
-  return (
-      <planeGeometryBuffer
-      <Suspense fallback={<FallbackMaterial url={image} />}>
-        <VideoMaterial url={video} />
-      </Suspense>
-  )
-}
-
-function VideoMaterial({ url }) {
-  const texture = useVideoTexture(url)
-  return <meshBasicMaterial map={texture} toneMapped={false} />
-}
-
-function FallbackMaterial({ url }) {
-  const texture = useTexture(url)
-  return <meshBasicMaterial map={texture} toneMapped={false} />
-}
-*/
 
 export function Computers(props) {
   const instances = useContext(context)
@@ -116,15 +37,13 @@ export function Computers(props) {
         geometry={nodes.Monitor4001.geometry}
         material={materials.Texture}
         position={[-0.19, 1.5, -3.31]}>
-        {
-        /*
+        {/*
         <Screen
           screen="Screen4001"
           video="/textures/spooky.mp4"
           image="/textures/placeholder.jpg"
         />
-        */
-        }
+        */}
       </mesh>
 
       {/* Small Monitors */}
