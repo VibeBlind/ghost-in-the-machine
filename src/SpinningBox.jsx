@@ -8,10 +8,12 @@ export function SpinningBox({ scale, ...props }) {
   // Hold state for hovered and clicked events
   const [hovered, hover] = useState(false)
   const [clicked, click] = useState(false)
+
   useCursor(hovered)
   // Subscribe this component to the render-loop, rotate the mesh every frame
   useFrame((state, delta) => (ref.current.rotation.x = ref.current.rotation.y += delta))
   // Return the view, these are regular Threejs elements expressed in JSX
+  
   return (
     <mesh
       {...props}

@@ -1,4 +1,5 @@
-import { useMemo, useContext, createContext } from 'react'
+import * as THREE from 'three'
+import { useState, useEffect, useMemo, useContext, createContext } from 'react'
 import { useGLTF, Merged } from '@react-three/drei'
 
 const context = createContext()
@@ -26,6 +27,26 @@ export function Instances({ children, ...props }) {
   )
 }
 
+function Video() {
+  const [video] = useState(
+    () => Object.assign(document.createElement('video'), { 
+      src: '/textures/chroma_eye.mp4',
+      crossOrigin: 'Anonymous',
+      loop: true,
+      muted: true
+    })
+  )
+  useEffect(() => void video.play(), [video])
+  return (
+    <mesh position={[0,1.2,0]} rotation={[0, 0, 0]} scale={[2.5, 2.5, 1]}>
+      <planeGeometry />
+      <meshBasicMaterial toneMapped={false}>
+        <videoTexture attach="map" args={[video]} encoding={THREE.sRGBEncoding} />
+      </meshBasicMaterial>
+    </mesh>
+  )
+}
+
 export function Computers(props) {
   const instances = useContext(context)
   const { nodes, materials } = useGLTF('/computers.glb', '10')
@@ -37,13 +58,7 @@ export function Computers(props) {
         geometry={nodes.Monitor4001.geometry}
         material={materials.Texture}
         position={[-0.19, 1.5, -3.31]}>
-        {/*
-        <Screen
-          screen="Screen4001"
-          video="/textures/spooky.mp4"
-          image="/textures/placeholder.jpg"
-        />
-        */}
+        <Video />
       </mesh>
 
       {/* Small Monitors */}
